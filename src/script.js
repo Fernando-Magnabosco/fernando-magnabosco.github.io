@@ -91,7 +91,7 @@ async function transition(hexa, framerate) { // animation
     for(var i = 0; i <= 2; i++){
         from[i] = parseInt(bg[i].match(regex));
         progr[i] = parseInt(bg[i].match(regex));
-        to[i] = parseint(hexa[2*i] + hexa[2*i+1], 16);
+        to[i] = parseInt(hexa[2*i] + hexa[2*i+1], 16);
     }
 
 
