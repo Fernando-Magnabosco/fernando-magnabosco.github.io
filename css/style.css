@@ -1,26 +1,49 @@
 body {
     font-family: Arial, Helvetica, sans-serif;
-    background-color: white;
 }
 
+h1{
+    margin-bottom: 20px;
+}
 
-/* CSS do input */
+span{
+    margin-left: 20px;
 
-#hex-input {
-    background-color: rgb(231, 231, 231);
+}
+
+.input{
+
     width: 200px;
     height: 50px;
     font-size: 35px;
     text-align: center;
     text-transform: uppercase;
-    border-radius: 10px;
-    float: right;
 }
 
+.button{
+
+    width: 50px;
+    height: 50px;
+    margin-left: 20px;
+}
+
+.round-corners{
+
+    background-color: rgb(231, 231, 231);
+    border-radius: 10px;
+    border-color: black;
+    margin-bottom: 20px;
+}
+
+.fl-right{
+
+    float: right;
+}
 
 /* Centralizar conteúdo da div */
 
 .center-content {
+
     height: 97vh;
     width: 97vw;
     display: flex;
@@ -28,12 +51,16 @@ body {
     align-items: center;
 }
 
-.btw {
+/* Animação do branco ao preto */
+.btw { 
+
     animation-duration: 1s;
     animation-name: btw;
 }
 
+/* Animação do preto ao branco */
 .wtb {
+
     animation-duration: 1s;
     animation-name: wtb;
 }

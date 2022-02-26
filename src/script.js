@@ -1,17 +1,29 @@
 function init() {
 
     var input = document.getElementById("hex-input");
-    var bg = document.body.style;
-    bg.backgroundColor = "rgb(255,255,255)";
+    var undo = document.getElementById("undo");
+    var random = document.getElementById("random");
+    var framerate = 60; // frames per second;
+    input.placeholder = generateRandomHexa();
+    document.body.style.backgroundColor = "rgb(255,255,255)";
 
     input.addEventListener("input", () => {
 
         input.placeholder = generateRandomHexa();
         var hexa = input.value;
         if (isValidHexa(hexa))
-            transition(hexa, 60);
-        
+            transition(hexa, framerate);
 
+    })
+
+    undo.addEventListener("click", () => {
+        console.log('oi');
+    })
+
+    random.addEventListener("click", () => {
+        let hexa = generateRandomHexa();
+        input.value = hexa;
+        transition(hexa, framerate);
     })
 
 }
@@ -35,7 +47,7 @@ function isValidHexa(hexa) {
 }
 
 
-function isBrightColour(red, green, blue) { // média aritmética entre r,g e b
+function isBrightColor(red, green, blue) { // média aritmética entre r,g e b
     // maior que metade de 2^8; 
 
     var result = (red + green + blue) / 3 > (256 / 2);
@@ -43,10 +55,10 @@ function isBrightColour(red, green, blue) { // média aritmética entre r,g e b
 
 }
 
-function textColour(red, green, blue) { // transforma o texto de acordo com o contraste;
+function textColor(red, green, blue) { // transforma o texto de acordo com o contraste;
 
     var title = document.getElementById("main");
-    let contrast = isBrightColour(red, green, blue);
+    let contrast = isBrightColor(red, green, blue);
     title.className = contrast ? "wtb" : "btw";
     title.style.color = contrast ? "black" : "white";
 
@@ -74,7 +86,7 @@ async function transition(hexa, framerate) {
 
     var diff = Object.assign({}, from);
     // var a = Date.now()
-    textColour(to.red, to.green, to.blue);
+    textColor(to.red, to.green, to.blue);
     for (var i = 0; i < framerate; i++) {
         console.log(bs.backgroundColor);
         diff.red += (to.red - from.red) / framerate;
