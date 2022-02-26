@@ -46,7 +46,7 @@ function isBrightColour(red, green, blue) { // média aritmética entre r,g e b
 function textColour(red, green, blue) { // transforma o texto de acordo com o contraste;
 
     var title = document.getElementById("main");
-    let contrast = isBrightColour(red, green, b);
+    let contrast = isBrightColour(red, green, blue);
     title.className = contrast ? "wtb" : "btw";
     title.style.color = contrast ? "black" : "white";
 
