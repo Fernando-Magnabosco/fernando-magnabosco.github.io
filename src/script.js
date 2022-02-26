@@ -25,7 +25,6 @@ function init() {
     
     undo.addEventListener("click", () => {
 
-        console.log(stack);
         if (stack.length > 1){
             stack.pop();
             var hexa = stack.pop();
