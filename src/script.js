@@ -3,8 +3,9 @@ function init() {
     var input = document.getElementById("hex-input");
     var undo = document.getElementById("undo");
     var random = document.getElementById("random");
-    var stack = []; // stack to keep track of all hexa typed;
+    var stack = ["FFFFFF"]; // stack to keep track of all hexa typed;
     var framerate = 60; // frames per second;
+
     input.placeholder = generateRandomHexa();
     document.body.style.backgroundColor = "rgb(255,255,255)";
 
@@ -13,21 +14,28 @@ function init() {
         input.placeholder = generateRandomHexa();
         var hexa = input.value;
         if (isValidHexa(hexa)){
-            transition(hexa, framerate);
             stack.push(hexa);
+            buttonColor(stack,undo);
+            transition(hexa, framerate);
+
         }
 
     })
 
+    
     undo.addEventListener("click", () => {
 
+        console.log(stack);
         if (stack.length > 1){
             stack.pop();
             var hexa = stack.pop();
             stack.push(hexa);
             input.value = hexa;
+            buttonColor(stack,undo);
             transition(hexa,framerate);
         }
+
+
 
     })
 
@@ -35,10 +43,12 @@ function init() {
         let hexa = generateRandomHexa();
         input.value = hexa;
         stack.push(hexa);
+        buttonColor(stack,undo);
         transition(hexa, framerate);
     })
 
 }
+
 
 function generateRandomHexa() {
 
@@ -72,6 +82,14 @@ function textColor(red, green, blue) { // transforms text acording to contrast;
     let contrast = isBrightColor(red, green, blue);
     title.className = contrast ? "wtb" : "btw";
     title.style.color = contrast ? "black" : "white";
+
+}
+
+function buttonColor(stack, button){ // transforms button "undo" according to stack size;
+
+    if(stack.length > 1) button.classList.remove("unclickable");
+    else button.classList.add("unclickable");
+
 
 }
 

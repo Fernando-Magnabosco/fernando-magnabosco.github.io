@@ -29,7 +29,7 @@ span{
 
 .round-corners{
 
-    background-color: rgb(231, 231, 231);
+    background-color: rgb(255, 255, 255);
     border-radius: 10px;
     border-color: black;
     margin-bottom: 20px;
@@ -38,6 +38,11 @@ span{
 .fl-right{
 
     float: right;
+}
+
+.unclickable{
+
+    background-color: #D0D0D0;
 }
 
 .center-content {
