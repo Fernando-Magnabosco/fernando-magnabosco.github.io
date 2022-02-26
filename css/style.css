@@ -40,8 +40,6 @@ span{
     float: right;
 }
 
-/* Centralizar conteúdo da div */
-
 .center-content {
 
     height: 97vh;
@@ -51,14 +49,14 @@ span{
     align-items: center;
 }
 
-/* Animação do branco ao preto */
+/* Fade from black to white */
 .btw { 
 
     animation-duration: 1s;
     animation-name: btw;
 }
 
-/* Animação do preto ao branco */
+/* Fade from white to black */
 .wtb {
 
     animation-duration: 1s;

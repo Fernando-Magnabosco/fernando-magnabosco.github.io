@@ -3,6 +3,7 @@ function init() {
     var input = document.getElementById("hex-input");
     var undo = document.getElementById("undo");
     var random = document.getElementById("random");
+    var stack = []; // stack to keep track of all hexa typed;
     var framerate = 60; // frames per second;
     input.placeholder = generateRandomHexa();
     document.body.style.backgroundColor = "rgb(255,255,255)";
@@ -11,18 +12,29 @@ function init() {
 
         input.placeholder = generateRandomHexa();
         var hexa = input.value;
-        if (isValidHexa(hexa))
+        if (isValidHexa(hexa)){
             transition(hexa, framerate);
+            stack.push(hexa);
+        }
 
     })
 
     undo.addEventListener("click", () => {
-        console.log('oi');
+
+        if (stack.length > 1){
+            stack.pop();
+            var hexa = stack.pop();
+            stack.push(hexa);
+            input.value = hexa;
+            transition(hexa,framerate);
+        }
+
     })
 
     random.addEventListener("click", () => {
         let hexa = generateRandomHexa();
         input.value = hexa;
+        stack.push(hexa);
         transition(hexa, framerate);
     })
 
@@ -40,22 +52,21 @@ function generateRandomHexa() {
 
 function isValidHexa(hexa) {
 
-    var regex = /[a-f0-9]{6}/i; // expressão regular - hexadecimal de seis digitos;
+    var regex = /[a-f0-9]{6}/i; // regular expression - six-digit hexadecimal;
     if (!regex.test(hexa)) return 0;
     return 1;
 
 }
 
 
-function isBrightColor(red, green, blue) { // média aritmética entre r,g e b
-    // maior que metade de 2^8; 
+function isBrightColor(red, green, blue) { // arithmetic mean between red, green and blue > 2^7;
 
     var result = (red + green + blue) / 3 > (256 / 2);
     return result;
 
 }
 
-function textColor(red, green, blue) { // transforma o texto de acordo com o contraste;
+function textColor(red, green, blue) { // transforms text acording to contrast;
 
     var title = document.getElementById("main");
     let contrast = isBrightColor(red, green, blue);
@@ -64,7 +75,7 @@ function textColor(red, green, blue) { // transforma o texto de acordo com o con
 
 }
 
-async function transition(hexa, framerate) {
+async function transition(hexa, framerate) { // animation
 
     var bs = document.body.style;
     var bg = bs.backgroundColor;
@@ -88,7 +99,7 @@ async function transition(hexa, framerate) {
     // var a = Date.now()
     textColor(to.red, to.green, to.blue);
     for (var i = 0; i < framerate; i++) {
-        console.log(bs.backgroundColor);
+
         diff.red += (to.red - from.red) / framerate;
         diff.green += (to.green - from.green) / framerate;
         diff.blue += (to.blue - from.blue) / framerate;
