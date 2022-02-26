@@ -3,14 +3,14 @@ function init() {
     var input = document.getElementById("hex-input");
     var bg = document.body.style;
     bg.backgroundColor = "rgb(255,255,255)";
-    input.placeholder = generateRandomHexa();
 
     input.addEventListener("input", () => {
 
+        input.placeholder = generateRandomHexa();
         var hexa = input.value;
         if (isValidHexa(hexa))
             transition(hexa, 60);
-
+        
 
     })
 
