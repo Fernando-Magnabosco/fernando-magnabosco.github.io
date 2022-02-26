@@ -2,7 +2,7 @@
 
 Ola :)
 
-Colors (iniciamente colours, mudado pois colours bagunçava o layout e eu não sabia consertar) é um projeto meu que começou num sábado tedioso de carnaval (o mesmo dia 
+Colors (iniciamente colours, mudado pois colours bagunçava o layout e eu não sabia consertar) é um projeto meu que começou num sábado tedioso pré-véspera de carnaval (o mesmo dia 
 que esse md foi escrito).
 
 É um projeto simples pra entregar pra prog 2. Fernando (meu professor, não eu) não deixou usar framework nenhum, então pra esse negócio não ficar feio foi difícil, já
