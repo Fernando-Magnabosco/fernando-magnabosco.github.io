@@ -68,20 +68,50 @@ span{
     animation-name: wtb;
 }
 
+.bg-btw{
+
+    animation-duration: 1s;
+    animation-name: bg-btw;
+}
+
+.bg-wtb{
+
+    animation-duration: 1s;
+    animation-name: bg-wtb;
+}
+
 @keyframes btw {
     0% {
-        color: black
+        color: black;
     }
     100% {
-        color: white
+        color: white;
     }
 }
 
 @keyframes wtb {
     0% {
-        color: white
+        color: white;
     }
     100% {
-        color: black
+        color: black;
+    }
+}
+
+@keyframes bg-btw {
+    0% {
+        background-color: black;
+    }
+    100% {
+        background-color: white;
+    }
+}
+
+@keyframes bg-wtb {
+    0% {
+        background-color: white;
+    }
+    100% {
+        background-color: black;
     }
 }

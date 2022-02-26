@@ -117,7 +117,7 @@ async function transition(hexa, framerate) { // animation
     for (var i = 0; i < framerate; i++) {
         for(var j = 0; j <=2; j++)
             progr[j] += (to[j] - from[j]) / framerate;
-        bs.backgroundColor = "rgb(" + Math.round(progr[0]) + ", " + Math.round(progr[1]) + ", " + Math.round(progr[1]) + ")";
+        bs.backgroundColor = "rgb(" + Math.round(progr[0]) + ", " + Math.round(progr[1]) + ", " + Math.round(progr[2]) + ")";
         await sleep(1000 / framerate);
     }
 
