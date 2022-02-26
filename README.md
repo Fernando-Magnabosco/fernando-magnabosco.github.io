@@ -1,6 +1,6 @@
 # Projeto Colors
 
-Ola :)
+Olá :)
 
 Colors (iniciamente colours, mudado pois colours bagunçava o layout e eu não sabia consertar) é um projeto meu que começou num sábado tedioso pré-véspera de carnaval (o mesmo dia 
 que esse md foi escrito).
