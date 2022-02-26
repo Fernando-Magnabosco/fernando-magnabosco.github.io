@@ -22,6 +22,17 @@ function init() {
 
     })
 
+    input.addEventListener("click", () =>{
+
+        if(!input.length){
+            var hexa = input.placeholder;
+            input.value = input.placeholder;
+            stack.push(hexa);
+            buttonColor(stack,undo);
+            transition(hexa, framerate);
+        }
+        
+    })
     
     undo.addEventListener("click", () => {
 
@@ -75,13 +86,24 @@ function isBrightColor(red, green, blue) { // arithmetic mean between red, green
 
 }
 
-function textColor(red, green, blue) { // transforms text acording to contrast;
+function textColor(contrast) { // transforms text acording to contrast;
 
     var title = document.getElementById("main");
-    let contrast = isBrightColor(red, green, blue);
     title.className = contrast ? "wtb" : "btw";
     title.style.color = contrast ? "black" : "white";
 
+}
+
+function boxColor(contrast, hexa){
+
+    var div = document.getElementById("boxes");
+    for (var i = 0; i < div.children.length; i++){
+  
+        div.children[i].classList.toggle("bg-wtb", contrast);
+        div.children[i].classList.toggle("bg-btw", !contrast);
+        div.children[i].style.backgroundColor = contrast ? "black" : "white";
+
+    }
 }
 
 function buttonColor(stack, button){ // transforms button "undo" according to stack size;
@@ -89,13 +111,17 @@ function buttonColor(stack, button){ // transforms button "undo" according to st
     if(stack.length > 1) button.classList.remove("unclickable");
     else button.classList.add("unclickable");
 
+}
 
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 async function transition(hexa, framerate) { // animation
 
     var bs = document.body.style;
-    var bg = bs.backgroundColor;
+    var bg = bs.backgroundColor; 
+    var div = document.getElementById("boxes");
 
     bg = bg.split(",");
     var regex = /[0-9]{1,3}/; // get the r,g,b values from bg string;
@@ -112,20 +138,27 @@ async function transition(hexa, framerate) { // animation
     }
 
 
-    textColor(to[0], to[1], to[2]);
+    var contrast = isBrightColor(to[0], to[1], to[2]);
+    textColor(contrast);
+    boxColor(contrast, hexa);
 
     for (var i = 0; i < framerate; i++) {
         for(var j = 0; j <=2; j++)
             progr[j] += (to[j] - from[j]) / framerate;
-        bs.backgroundColor = "rgb(" + Math.round(progr[0]) + ", " + Math.round(progr[1]) + ", " + Math.round(progr[2]) + ")";
+
+        var string = "rgb(" + Math.round(progr[0]) + ", " + Math.round(progr[1]) + ", " + Math.round(progr[2]) + ")";
+        bs.backgroundColor = string;
+
+        for(var j = 0; j < div.children.length; j++)
+            div.children[j].style.color = string;
+
+        
+        
         await sleep(1000 / framerate);
     }
 
 }
 
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
 
 
 document.addEventListener('DOMContentLoaded', init);
