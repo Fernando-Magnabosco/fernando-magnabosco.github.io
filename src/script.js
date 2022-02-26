@@ -81,35 +81,27 @@ async function transition(hexa, framerate) { // animation
     var bg = bs.backgroundColor;
 
     bg = bg.split(",");
+    var regex = /[0-9]{1,3}/; // get the r,g,b values from bg string;
 
-    var regex = /[0-9]{1,3}/;
-    var from = {
+    var from = [];
+    var progr = [];
 
-        red: parseInt(bg[0].match(regex)),
-        green: parseInt(bg[1].match(regex)),
-        blue: parseInt(bg[2].match(regex))
-    };
-    var to = {
-        red: parseInt(hexa[0] + hexa[1], 16),
-        green: parseInt(hexa[2] + hexa[3], 16),
-        blue: parseInt(hexa[4] + hexa[5], 16)
-    };
+    // indexes (arrays from, diff and to): 0 = red, 1 = green, 2 = blue;
+    for(var i = 0; i <= 2; i++){
+        from[i] = parseInt(bg[i].match(regex));
+        progr[i] = parseInt(bg[i].match(regex));
+    }
 
-    var diff = Object.assign({}, from);
-    // var a = Date.now()
-    textColor(to.red, to.green, to.blue);
+    var to = [parseInt(hexa[0] + hexa[1], 16),parseInt(hexa[2] + hexa[3], 16),parseInt(hexa[4] + hexa[5], 16)];
+
+    textColor(to[0], to[1], to[2]);
+
     for (var i = 0; i < framerate; i++) {
-
-        diff.red += (to.red - from.red) / framerate;
-        diff.green += (to.green - from.green) / framerate;
-        diff.blue += (to.blue - from.blue) / framerate;
-        bs.backgroundColor = "rgb(" + Math.round(diff.red) + ", " + Math.round(diff.green) + ", " + Math.round(diff.blue) + ")";
+        for(var j = 0; j <=2; j++)
+            progr[j] += (to[j] - from[j]) / framerate;
+        bs.backgroundColor = "rgb(" + Math.round(progr[0]) + ", " + Math.round(progr[1]) + ", " + Math.round(progr[1]) + ")";
         await sleep(1000 / framerate);
     }
-    // console.log(Date.now()-a + " miliseconds");
-
-
-
 
 }
 
