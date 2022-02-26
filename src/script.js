@@ -84,15 +84,16 @@ async function transition(hexa, framerate) { // animation
     var regex = /[0-9]{1,3}/; // get the r,g,b values from bg string;
 
     var from = [];
+    var to = [];
     var progr = [];
 
     // indexes (arrays from, diff and to): 0 = red, 1 = green, 2 = blue;
     for(var i = 0; i <= 2; i++){
         from[i] = parseInt(bg[i].match(regex));
         progr[i] = parseInt(bg[i].match(regex));
+        to[i] = parseint(hexa[2*i] + hexa[2*i+1], 16);
     }
 
-    var to = [parseInt(hexa[0] + hexa[1], 16),parseInt(hexa[2] + hexa[3], 16),parseInt(hexa[4] + hexa[5], 16)];
 
     textColor(to[0], to[1], to[2]);
 
