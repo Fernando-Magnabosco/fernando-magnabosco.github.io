@@ -16,58 +16,58 @@ function init() {
         stop = true;
         input.placeholder = generateRandomHexa();
         var hexa = input.value;
-        if (isValidHexa(hexa)){
-            stack.push(hexa);
-            buttonColor(stack,undo);
+        if (isValidHexa(hexa)) {
+            push(stack, hexa);
+            buttonColor(stack, undo);
             transition(hexa, framerate);
 
         }
 
     })
 
-    input.addEventListener("click", () =>{
+    input.addEventListener("click", () => {
 
-        if(!input.value.length){
+        if (!input.value.length) {
             var hexa = input.placeholder;
             input.value = input.placeholder;
-            stack.push(hexa);
-            buttonColor(stack,undo);
+            push(stack, hexa);
+            buttonColor(stack, undo);
             transition(hexa, framerate);
         }
 
     })
-    
+
     undo.addEventListener("click", () => {
 
         stop = true;
-        if (stack.length > 1){
+        if (stack.length > 1) {
             stack.pop();
             var hexa = stack.pop();
-            stack.push(hexa);
+            push(stack, hexa);
             input.value = hexa;
-            buttonColor(stack,undo);
-            transition(hexa,framerate);
+            buttonColor(stack, undo);
+            transition(hexa, framerate);
         }
 
 
 
     })
 
-    fade.addEventListener("click", async () =>{
+    fade.addEventListener("click", async () => {
 
         stop = !stop;
-        
-        if(input.value = "fading") input.value = "paused";
-        while(true && !stop){
+
+        if (input.value = "fading") input.value = "paused";
+        while (true && !stop) {
 
             var hexa = generateRandomHexa();
-            stack.push(hexa);
-            buttonColor(stack,undo);
+            push(stack, hexa);
+            buttonColor(stack, undo);
             input.value = "fading"
-            await transition(hexa,framerate);
+            await transition(hexa, framerate);
 
         }
-        
+
 
     })
 
@@ -75,13 +75,18 @@ function init() {
         stop = true;
         var hexa = generateRandomHexa();
         input.value = hexa;
-        stack.push(hexa);
-        buttonColor(stack,undo);
+        push(stack, hexa);
+        buttonColor(stack, undo);
         transition(hexa, framerate);
     })
 
 }
 
+function push(stack, value) {
+
+    if (stack.length < 150) stack.push(value);
+    
+}
 
 function generateRandomHexa() {
 
@@ -117,11 +122,11 @@ function textColor(contrast) { // transforms text acording to contrast;
 
 }
 
-function boxColor(contrast, hexa){
+function boxColor(contrast, hexa) {
 
     var div = document.getElementById("boxes");
-    for (var i = 0; i < div.children.length; i++){
-  
+    for (var i = 0; i < div.children.length; i++) {
+
         div.children[i].classList.toggle("bg-wtb", contrast);
         div.children[i].classList.toggle("bg-btw", !contrast);
         div.children[i].style.backgroundColor = contrast ? "black" : "white";
@@ -129,9 +134,9 @@ function boxColor(contrast, hexa){
     }
 }
 
-function buttonColor(stack, button){ // transforms button "undo" according to stack size;
+function buttonColor(stack, button) { // transforms button "undo" according to stack size;
 
-    if(stack.length > 1) button.classList.remove("unclickable");
+    if (stack.length > 1) button.classList.remove("unclickable");
     else button.classList.add("unclickable");
 
 }
@@ -143,7 +148,7 @@ function sleep(ms) {
 async function transition(hexa, framerate) { // animation
 
     var bs = document.body.style;
-    var bg = bs.backgroundColor; 
+    var bg = bs.backgroundColor;
     var div = document.getElementById("boxes");
 
     bg = bg.split(",");
@@ -154,10 +159,10 @@ async function transition(hexa, framerate) { // animation
     var progr = [];
 
     // indexes (arrays from, diff and to): 0 = red, 1 = green, 2 = blue;
-    for(var i = 0; i <= 2; i++){
+    for (var i = 0; i <= 2; i++) {
         from[i] = parseInt(bg[i].match(regex));
         progr[i] = parseInt(bg[i].match(regex));
-        to[i] = parseInt(hexa[2*i] + hexa[2*i+1], 16);
+        to[i] = parseInt(hexa[2 * i] + hexa[2 * i + 1], 16);
     }
 
 
@@ -166,17 +171,17 @@ async function transition(hexa, framerate) { // animation
     boxColor(contrast, hexa);
 
     for (var i = 0; i < framerate; i++) {
-        for(var j = 0; j <=2; j++)
+        for (var j = 0; j <= 2; j++)
             progr[j] += (to[j] - from[j]) / framerate;
 
         var string = "rgb(" + Math.round(progr[0]) + ", " + Math.round(progr[1]) + ", " + Math.round(progr[2]) + ")";
         bs.backgroundColor = string;
 
-        for(var j = 0; j < div.children.length; j++)
+        for (var j = 0; j < div.children.length; j++)
             div.children[j].style.color = string;
 
-        
-        
+
+
         await sleep(1000 / framerate);
     }
 
