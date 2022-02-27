@@ -3,6 +3,8 @@ function init() {
     var input = document.getElementById("hex-input");
     var undo = document.getElementById("undo");
     var random = document.getElementById("random");
+    var fade = document.getElementById("fade");
+    var stop = true;
     var stack = ["FFFFFF"]; // stack to keep track of all hexa typed;
     var framerate = 60; // frames per second;
 
@@ -11,6 +13,7 @@ function init() {
 
     input.addEventListener("input", () => {
 
+        stop = true;
         input.placeholder = generateRandomHexa();
         var hexa = input.value;
         if (isValidHexa(hexa)){
@@ -36,6 +39,7 @@ function init() {
     
     undo.addEventListener("click", () => {
 
+        stop = true;
         if (stack.length > 1){
             stack.pop();
             var hexa = stack.pop();
@@ -49,8 +53,27 @@ function init() {
 
     })
 
+    fade.addEventListener("click", async () =>{
+
+        stop = !stop;
+        
+        if(input.value = "fading") input.value = "paused";
+        while(true && !stop){
+
+            var hexa = generateRandomHexa();
+            stack.push(hexa);
+            buttonColor(stack,undo);
+            input.value = "fading"
+            await transition(hexa,framerate);
+
+        }
+        
+
+    })
+
     random.addEventListener("click", () => {
-        let hexa = generateRandomHexa();
+        stop = true;
+        var hexa = generateRandomHexa();
         input.value = hexa;
         stack.push(hexa);
         buttonColor(stack,undo);
