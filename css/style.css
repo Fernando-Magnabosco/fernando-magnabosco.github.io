@@ -4,6 +4,7 @@ body {
 
 h1{
     margin-bottom: 20px;
+    float: inline-end;
 }
 
 span{
@@ -33,6 +34,7 @@ span{
     border-radius: 10px;
     border-color: black;
     margin-bottom: 20px;
+    color: rgb(255, 255, 255);
 }
 
 .fl-right{

@@ -10,6 +10,8 @@ function init() {
 
     input.placeholder = generateRandomHexa();
     document.body.style.backgroundColor = "rgb(255,255,255)";
+    boxColor(isBrightColor(255, 255, 255), "FFFFFF");
+    
 
     input.addEventListener("input", () => {
 
