@@ -24,14 +24,14 @@ function init() {
 
     input.addEventListener("click", () =>{
 
-        if(!input.length){
+        if(!input.value.length){
             var hexa = input.placeholder;
             input.value = input.placeholder;
             stack.push(hexa);
             buttonColor(stack,undo);
             transition(hexa, framerate);
         }
-        
+
     })
     
     undo.addEventListener("click", () => {
