@@ -1,21 +1,39 @@
 body {
+
     font-family: Arial, Helvetica, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 h1{
-    margin-bottom: 20px;
-    float: inline-end;
+
+    width: 100%;
+    text-align: right;
 }
 
 span{
-    margin-left: 20px;
 
+    font-size: 32pt;
+    width: 20%;
+    text-align: center;
+    margin:0;
+}
+
+#main{
+
+    width: 275px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: right;
 }
 
 .input{
 
-    width: 200px;
+    width: 75%;
     height: 50px;
+    margin-left: 5%;
+    margin-bottom: 20px;
     font-size: 35px;
     text-align: center;
     text-transform: uppercase;
@@ -26,6 +44,7 @@ span{
     width: 50px;
     height: 50px;
     margin-left: 20px;
+    margin-bottom: 20px;
 }
 
 .round-corners{
@@ -33,27 +52,12 @@ span{
     background-color: rgb(255, 255, 255);
     border-radius: 10px;
     border-color: black;
-    margin-bottom: 20px;
     color: rgb(255, 255, 255);
-}
-
-.fl-right{
-
-    float: right;
 }
 
 .unclickable{
 
     background-color: silver !important;
-}
-
-.center-content {
-
-    height: 97vh;
-    width: 97vw;
-    display: flex;
-    justify-content: center;
-    align-items: center;
 }
 
 /* Fade from black to white */

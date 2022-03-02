@@ -126,13 +126,13 @@ function textColor(contrast) { // transforms text acording to contrast;
 
 function boxColor(contrast, hexa) {
 
-    var div = document.getElementById("boxes");
+    var div = document.getElementById("main");
     for (var i = 0; i < div.children.length; i++) {
-
+        if(div.children[i].classList.contains("round-corners")){
         div.children[i].classList.toggle("bg-wtb", contrast);
         div.children[i].classList.toggle("bg-btw", !contrast);
         div.children[i].style.backgroundColor = contrast ? "black" : "white";
-
+        }
     }
 }
 
@@ -151,14 +151,14 @@ async function transition(hexa, framerate) { // animation
 
     var bs = document.body.style;
     var bg = bs.backgroundColor;
-    var div = document.getElementById("boxes");
+    var div = document.getElementById("main");
 
     bg = bg.split(",");
     var regex = /[0-9]{1,3}/; // get the r,g,b values from bg string;
 
-    var from = [];
-    var to = [];
-    var progr = [];
+    var from = [];  // initial colors;
+    var to = [];    // end colors;
+    var progr = []; // progress;
 
     // indexes (arrays from, diff and to): 0 = red, 1 = green, 2 = blue;
     for (var i = 0; i <= 2; i++) {
@@ -179,9 +179,10 @@ async function transition(hexa, framerate) { // animation
         var string = "rgb(" + Math.round(progr[0]) + ", " + Math.round(progr[1]) + ", " + Math.round(progr[2]) + ")";
         bs.backgroundColor = string;
 
-        for (var j = 0; j < div.children.length; j++)
-            div.children[j].style.color = string;
-
+        for (var j = 0; j < div.children.length; j++){
+            if(div.children[j].classList.contains("round-corners"))
+                div.children[j].style.color = string;
+        }
 
 
         await sleep(1000 / framerate);
