@@ -118,7 +118,7 @@ function isBrightColor(red, green, blue) { // arithmetic mean between red, green
 
 function textColor(contrast) { // transforms text acording to contrast;
 
-    var title = document.getElementById("boxes");
+    var title = document.getElementById("main");
     title.className = contrast ? "wtb" : "btw";
     title.style.color = contrast ? "black" : "white";
 
