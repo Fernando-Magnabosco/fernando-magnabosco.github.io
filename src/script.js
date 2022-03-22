@@ -10,8 +10,8 @@ function init() {
 
     input.placeholder = generateRandomHexa();
     document.body.style.backgroundColor = "rgb(255,255,255)";
-    boxColor(isBrightColor(255, 255, 255), "FFFFFF");
-    
+    boxColor(isBrightColor(255, 255, 255));
+
 
     input.addEventListener("input", () => {
 
@@ -19,9 +19,7 @@ function init() {
         input.placeholder = generateRandomHexa();
         var hexa = input.value;
         if (isValidHexa(hexa)) {
-            push(stack, hexa);
-            buttonColor(stack, undo);
-            transition(hexa, framerate);
+            update(stack, hexa, framerate);
 
         }
 
@@ -32,9 +30,7 @@ function init() {
         if (!input.value.length) {
             var hexa = input.placeholder;
             input.value = input.placeholder;
-            push(stack, hexa);
-            buttonColor(stack, undo);
-            transition(hexa, framerate);
+            update(stack, hexa, framerate);
         }
 
     })
@@ -45,10 +41,8 @@ function init() {
         if (stack.length > 1) {
             stack.pop();
             var hexa = stack.pop();
-            push(stack, hexa);
             input.value = hexa;
-            buttonColor(stack, undo);
-            transition(hexa, framerate);
+            update(stack, hexa);
         }
 
 
@@ -60,14 +54,11 @@ function init() {
         stop = !stop;
 
         if (input.value = "fading") input.value = "paused";
-        while (true && !stop) {
+        while (!stop) {
 
             var hexa = generateRandomHexa();
-            push(stack, hexa);
-            buttonColor(stack, undo);
             input.value = "fading"
-            await transition(hexa, framerate);
-
+            await update(stack, hexa, framerate);
         }
 
 
@@ -77,17 +68,24 @@ function init() {
         stop = true;
         var hexa = generateRandomHexa();
         input.value = hexa;
-        push(stack, hexa);
-        buttonColor(stack, undo);
-        transition(hexa, framerate);
+        update(stack, hexa, framerate);
     })
+
+}
+
+async function update(stack, hexa, framerate) {
+
+    push(stack, hexa);
+    buttonColor(stack, undo);
+    await transition(hexa, framerate);
+    console.log(document.body.style.backgroundColor);
 
 }
 
 function push(stack, value) {
 
     if (stack.length < 150) stack.push(value);
-    
+
 }
 
 function generateRandomHexa() {
@@ -124,7 +122,7 @@ function textColor(contrast) { // transforms text acording to contrast;
 
 }
 
-function boxColor(contrast, hexa) {
+function boxColor(contrast) {
 
     var div = document.getElementById("boxes");
     for (var i = 0; i < div.children.length; i++) {
@@ -134,7 +132,7 @@ function boxColor(contrast, hexa) {
     }
 }
 
-function buttonColor(stack, button) { // transforms button "undo" according to stack size;
+function buttonColor(stack, button) { // transforms button according to stack size;
 
     if (stack.length > 1) button.classList.remove("unclickable");
     else button.classList.add("unclickable");
@@ -150,7 +148,6 @@ async function transition(hexa, framerate) { // animation
     var bs = document.body.style;
     var bg = bs.backgroundColor;
     var div = document.getElementById("boxes");
-
     bg = bg.split(",");
     var regex = /[0-9]{1,3}/; // get the r,g,b values from bg string;
 
@@ -161,14 +158,14 @@ async function transition(hexa, framerate) { // animation
     // indexes (arrays from, diff and to): 0 = red, 1 = green, 2 = blue;
     for (var i = 0; i <= 2; i++) {
         from[i] = parseInt(bg[i].match(regex));
-        progr[i] = parseInt(bg[i].match(regex));
+        progr[i] = from[i];
         to[i] = parseInt(hexa[2 * i] + hexa[2 * i + 1], 16);
     }
 
 
     var contrast = isBrightColor(to[0], to[1], to[2]);
     textColor(contrast);
-    boxColor(contrast, hexa);
+    boxColor(contrast);
 
     for (var i = 0; i < framerate; i++) {
         for (var j = 0; j <= 2; j++)
@@ -179,7 +176,7 @@ async function transition(hexa, framerate) { // animation
 
         for (var j = 0; j < div.children.length; j++)
             div.children[j].style.color = string;
-        
+
 
 
         await sleep(1000 / framerate);
