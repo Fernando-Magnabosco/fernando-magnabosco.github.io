@@ -42,7 +42,7 @@ function init() {
             stack.pop();
             var hexa = stack.pop();
             input.value = hexa;
-            update(stack, hexa);
+            update(stack, hexa, framerate);
         }
 
 
@@ -78,7 +78,6 @@ async function update(stack, hexa, framerate) {
     push(stack, hexa);
     buttonColor(stack, undo);
     await transition(hexa, framerate);
-    console.log(document.body.style.backgroundColor);
 
 }
 
