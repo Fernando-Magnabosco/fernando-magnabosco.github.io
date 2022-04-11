@@ -1,17 +1,38 @@
-function init() {
+var framerate = 60; // frames per second;
+var divStack = document.getElementById("stack");
 
-    var input = document.getElementById("hex-input");
-    var undo = document.getElementById("undo");
-    var random = document.getElementById("random");
-    var fade = document.getElementById("fade");
+
+function init() {
+    
     var stop = true;
-    var stack = ["FFFFFF"]; // stack to keep track of all hexa typed;
-    var framerate = 60; // frames per second;
+    
+    var input = document.getElementById("hex-input");
+    var random = document.getElementById("random");
+    var sButton = document.getElementById("sbutton");
+    var fade = document.getElementById("fade");
+
+    var stack = []; // stack to keep track of all hexa typed;
 
     input.placeholder = generateRandomHexa();
     document.body.style.backgroundColor = "rgb(255,255,255)";
     boxColor(isBrightColor(255, 255, 255));
 
+    var parity = false;
+    sButton.addEventListener("click", ()=>{
+        
+        if(!parity){
+            sButton.children[0].classList.add("r-180");
+            sButton.children[0].classList.remove("r-360");
+            sButton.children[0].style.transform = "rotate(180deg)";
+        } else{
+            sButton.children[0].classList.add("r-360");
+            sButton.children[0].classList.remove("r-180");
+            sButton.children[0].style.transform = "rotate(360deg)";
+        }
+        if(parity) while(divStack.children.length > 1) divStack.removeChild(divStack.lastChild);
+        else updateStack(divStack,stack);
+        parity = !parity;
+    });
 
     input.addEventListener("input", () => {
 
@@ -19,7 +40,7 @@ function init() {
         input.placeholder = generateRandomHexa();
         var hexa = input.value;
         if (isValidHexa(hexa)) {
-            update(stack, hexa, framerate);
+            update(stack, hexa);
 
         }
 
@@ -30,22 +51,8 @@ function init() {
         if (!input.value.length) {
             var hexa = input.placeholder;
             input.value = input.placeholder;
-            update(stack, hexa, framerate);
+            update(stack, hexa);
         }
-
-    })
-
-    undo.addEventListener("click", () => {
-
-        stop = true;
-        if (stack.length > 1) {
-            stack.pop();
-            var hexa = stack.pop();
-            input.value = hexa;
-            update(stack, hexa, framerate);
-        }
-
-
 
     })
 
@@ -58,7 +65,7 @@ function init() {
 
             var hexa = generateRandomHexa();
             input.value = "fading"
-            await update(stack, hexa, framerate);
+            await update(stack, hexa);
         }
 
 
@@ -68,22 +75,40 @@ function init() {
         stop = true;
         var hexa = generateRandomHexa();
         input.value = hexa;
-        update(stack, hexa, framerate);
+        update(stack, hexa);
     })
 
 }
 
-async function update(stack, hexa, framerate) {
+function updateStack(div,stack){
+
+    while(div.children.length > 1) div.removeChild(div.lastChild);
+    for(let i = 0; i < stack.length; i++){
+
+        var button = document.createElement("button");
+        button.classList = "round-corners stack-child";
+        button.style.height = div.height;
+        button.style.backgroundColor = stack[i];
+        button.addEventListener("click", ()=>{
+            update(stack,stack[i]);
+        })
+        div.appendChild(button);
+    }
+
+}
+
+async function update(stack, hexa) {
 
     push(stack, hexa);
-    buttonColor(stack, undo);
-    await transition(hexa, framerate);
+    await transition(hexa);
 
 }
 
 function push(stack, value) {
 
-    if (stack.length < 150) stack.push(value);
+    stack.push(value);
+    if(stack.length > 5)
+        stack.shift();
 
 }
 
@@ -125,16 +150,13 @@ function boxColor(contrast) {
 
     var div = document.getElementById("boxes");
     for (var i = 0; i < div.children.length; i++) {
-        div.children[i].classList.toggle("bg-wtb", contrast);
-        div.children[i].classList.toggle("bg-btw", !contrast);
-        div.children[i].style.backgroundColor = contrast ? "black" : "white";
+        console.log(div.children[2].children);
+        if(i == 2) var child = div.children[i].children[0];
+        else var child = div.children[i];
+        child.classList.toggle("bg-wtb", contrast);
+        child.classList.toggle("bg-btw", !contrast);
+        child.style.backgroundColor = contrast ? "black" : "white";
     }
-}
-
-function buttonColor(stack, button) { // transforms button according to stack size;
-
-    if (stack.length > 1) button.classList.remove("unclickable");
-    else button.classList.add("unclickable");
 
 }
 
@@ -142,7 +164,7 @@ function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-async function transition(hexa, framerate) { // animation
+async function transition(hexa) { // animation
 
     var bs = document.body.style;
     var bg = bs.backgroundColor;
@@ -174,8 +196,10 @@ async function transition(hexa, framerate) { // animation
         bs.backgroundColor = string;
 
         for (var j = 0; j < div.children.length; j++)
+            {
             div.children[j].style.color = string;
-
+            if(j == 2) div.children[j].children[0].style.color = string;
+        }
 
 
         await sleep(1000 / framerate);

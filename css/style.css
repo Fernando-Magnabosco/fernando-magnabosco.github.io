@@ -24,6 +24,15 @@ body {
 
 }   
 
+#stack{
+
+    visibility: hidden;
+    width: 50px;
+    height: 45%;
+    display: flex;
+    flex-wrap: wrap;
+}
+
 .centralize{
 
     height: 100%;
@@ -72,17 +81,20 @@ button{
 
 /* Box Stylers: */
 
+.stack-child{
+
+    visibility:visible;
+    margin: 0;
+    height: 100%;
+    transform: rotate(180deg);
+}
+
 .round-corners{
 
     background-color: rgb(255, 255, 255);
     border-radius: 10px;
     border-color: black;
     color: rgb(255, 255, 255);
-}
-
-.unclickable{
-
-    background-color: silver !important;
 }
 
 .blank-10{
@@ -121,6 +133,19 @@ button{
     animation-name: bg-wtb;
 }
 
+.r-180{
+
+    animation-duration: 1s;
+    animation-name: r-180;
+}
+
+.r-360{
+
+    animation-duration: 1s;
+    animation-name: r-360;
+}
+
+
 @keyframes btw {
     0% {
         color: black;
@@ -154,5 +179,23 @@ button{
     }
     100% {
         background-color: black;
+    }
+}
+
+@keyframes r-180 {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(180deg);
+    }
+}
+
+@keyframes r-360 {
+    0% {
+        transform: rotate(180deg);
+    }
+    100% {
+        transform: rotate(360deg);
     }
 }
