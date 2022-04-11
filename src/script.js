@@ -35,8 +35,8 @@ function init() {
 
     })
 
+    var parity = false;
     undo.addEventListener("click", () => {
-
         stop = true;
         if (stack.length > 1) {
             stack.pop();
@@ -44,7 +44,26 @@ function init() {
             input.value = hexa;
             update(stack, hexa, framerate);
         }
+        if (!parity)
+            var targetH = 45 * stack.length + 45;
+        else
+            var targetH = 45;
 
+        var start = parseInt(undo.style.height);
+        var stackIndex = 0;
+        var interval = setInterval(() => {
+            if (parseInt(undo.style.height) == targetH) clearInterval(interval);
+            undo.style.height = parseFloat(undo.style.height) + (targetH - start) / framerate + "%";
+            if (parseInt(undo.style.height) / targetH > stackIndex / stack.length) {
+                var button = document.createElement("button");
+                button.innerText = stackIndex;
+                button.classList.add("round-corners");
+                undo.appendChild(button);
+                stackIndex++;
+            }
+        }, 10 / framerate);
+
+        parity = !parity;
 
 
     })
@@ -83,7 +102,7 @@ async function update(stack, hexa, framerate) {
 
 function push(stack, value) {
 
-    if (stack.length < 150) stack.push(value);
+    if (stack.length < 5) stack.push(value);
 
 }
 

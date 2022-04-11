@@ -121,6 +121,18 @@ button{
     animation-name: bg-wtb;
 }
 
+.ht-225{
+
+    animation-duration: 1s;
+    animation-name: ht-225;
+}
+
+.ht-45{
+
+    animation-duration: 1s;
+    animation-name: ht-45;
+}
+
 @keyframes btw {
     0% {
         color: black;
@@ -154,5 +166,23 @@ button{
     }
     100% {
         background-color: black;
+    }
+}
+
+@keyframes ht-225{
+    0%{
+        height:45%;
+    }
+    100%{
+        height: 225%;
+    }
+}
+
+@keyframes ht-45{
+    0%{
+        height:225%;
+    }
+    100%{
+        height: 45%;
     }
 }
