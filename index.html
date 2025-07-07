@@ -1,51 +1,483 @@
-<html>
-
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
 <head>
-
-    <link rel="stylesheet" href="css/style.css">
-    <title> Color Shifter </title>
-    <script src="https://kit.fontawesome.com/eff1635aaf.js" crossorigin="anonymous"></script>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TCC: Geração de Código Rust com LLMs para Testes de Compiladores</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Academic Calm -->
+    <!-- Application Structure Plan: The SPA uses a thematic, non-linear structure with a sticky navigation bar for easy access to key concepts. The flow is designed for exploration: starting with the core problem (Why test Rust compilers?), moving to the proposed LLM-based solution, detailing the methodology, offering an interactive comparison of existing tools (the core interactive element), and finally showing the project timeline. This structure is chosen over a linear report format to engage the user and allow them to focus on the areas that interest them most, facilitating better understanding and synthesis of the research. -->
+    <!-- Visualization & Content Choices: 1. **Problem/Solution:** (Goal: Inform) Presented using cards (HTML/CSS) for key concepts and a simple flowchart (HTML/CSS) for the process, making abstract ideas tangible. 2. **Methodology/Timeline:** (Goal: Organize) Presented as a visual step-by-step guide and a CSS-based Gantt chart for clarity and better information retention than a simple list or table. 3. **Related Works:** (Goal: Compare) An interactive horizontal bar chart (Chart.js/Canvas) visualizes a qualitative "Rust-Specificity" score derived from the report, allowing for quick comparison. This is linked to a details pane updated via JavaScript, where users can click a tool's name to see its specific approach, focus, and limitations. This interactive method encourages exploration and provides deeper insight than the static table in the source report. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* slate-50 */
+            color: #1e293b; /* slate-800 */
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+        .gantt-bar {
+            background: linear-gradient(to right, #2dd4bf, #0d9488);
+            opacity: 0.8;
+        }
+        .nav-link {
+            transition: color 0.2s;
+        }
+        .nav-link:hover {
+            color: #0d9488; /* teal-600 */
+        }
+        .tool-button.active {
+            background-color: #0d9488;
+            color: white;
+        }
+        .tool-button {
+            transition: all 0.2s;
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 </head>
-
 <body>
 
-    <div class = "centralize">
-
-        <div id="main" class="wtb">
-
-            <h1>COLOR SHIFTER</h1>
-            
-            <div class = "blank-10"></div>
-
-            <span>#</span> 
-
-            <div id = "boxes">
-
-                <input maxlength="6" type="text" id="hex-input" class="round-corners">
-
-                <div class = "blank-10"></div>
-
-                <button id="undo" class="round-corners unclickable"><i
-                    class="fa-2xl fa-solid fa-arrow-left"></i></button>
-
-                <button id="fade" class="round-corners"><i
-                        class="fa-2xl fa-solid fa-clover"></i></button>
-                        
-                <button id="random" class="round-corners"><i
-                    class="fa-2xl fa-solid fa-dice"></i></button>
-
+    <header class="bg-white/80 backdrop-blur-md sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center max-w-7xl">
+            <div class="font-bold text-lg text-slate-700">Fernando S. Magnabosco</div>
+            <div class="hidden md:flex space-x-8">
+                <a href="#home" class="nav-link text-slate-600">Início</a>
+                <a href="#problema" class="nav-link text-slate-600">O Problema</a>
+                <a href="#solucao" class="nav-link text-slate-600">A Solução</a>
+                <a href="#ferramentas" class="nav-link text-slate-600">Ferramentas</a>
+                <a href="#metodologia" class="nav-link text-slate-600">Metodologia</a>
+                <a href="#cronograma" class="nav-link text-slate-600">Cronograma</a>
             </div>
-
+            <div class="md:hidden">
+                <button id="mobile-menu-button" class="text-slate-600 focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                </button>
+            </div>
+        </nav>
+        <div id="mobile-menu" class="hidden md:hidden px-6 pt-2 pb-4">
+            <a href="#home" class="block py-2 nav-link text-slate-600">Início</a>
+            <a href="#problema" class="block py-2 nav-link text-slate-600">O Problema</a>
+            <a href="#solucao" class="block py-2 nav-link text-slate-600">A Solução</a>
+            <a href="#ferramentas" class="block py-2 nav-link text-slate-600">Ferramentas</a>
+            <a href="#metodologia" class="block py-2 nav-link text-slate-600">Metodologia</a>
+            <a href="#cronograma" class="block py-2 nav-link text-slate-600">Cronograma</a>
         </div>
+    </header>
 
-    </div>
+    <main>
+        <section id="home" class="py-20 md:py-32 bg-white">
+            <div class="container mx-auto px-6 text-center max-w-4xl">
+                <h1 class="text-4xl md:text-5xl font-bold text-slate-800 mb-4">Geração de Código Rust Aleatório com LLMs para Testes de Compiladores</h1>
+                <p class="text-lg md:text-xl text-slate-600 mb-8">Um estudo sobre a aplicação de Modelos de Linguagem Ampla (LLMs) para aprimorar a confiabilidade dos compiladores da linguagem Rust, garantindo maior segurança e robustez no desenvolvimento de software.</p>
+                <a href="#problema" class="bg-teal-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-teal-700 transition duration-300">Explorar o Projeto</a>
+            </div>
+        </section>
 
-    <script type="text/javascript" src="src/script.js"></script>
+        <section id="problema" class="py-16 md:py-24">
+            <div class="container mx-auto px-6 max-w-7xl">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-slate-800">O Desafio: Testando Compiladores Rust</h2>
+                    <p class="mt-4 text-lg text-slate-600 max-w-3xl mx-auto">Com a crescente adoção de Rust em sistemas críticos, garantir a corretude de seus compiladores é fundamental. A complexidade da linguagem, especialmente seus mecanismos de segurança de memória, apresenta um desafio único para as técnicas de teste tradicionais.</p>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-8 text-center">
+                    <div class="bg-white p-8 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
+                        <div class="text-4xl mb-4">🛡️</div>
+                        <h3 class="text-xl font-bold mb-2">Ownership</h3>
+                        <p class="text-slate-600">Garante que cada valor tenha um único "dono", prevenindo o uso de memória após sua liberação e outros bugs comuns em linguagens de baixo nível.</p>
+                    </div>
+                    <div class="bg-white p-8 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
+                        <div class="text-4xl mb-4">🤝</div>
+                        <h3 class="text-xl font-bold mb-2">Borrowing</h3>
+                        <p class="text-slate-600">Permite o acesso a dados sem transferir a posse, sob regras estritas que evitam conflitos de acesso e data races em tempo de compilação.</p>
+                    </div>
+                    <div class="bg-white p-8 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
+                        <div class="text-4xl mb-4">⏳</div>
+                        <h3 class="text-xl font-bold mb-2">Lifetimes</h3>
+                        <p class="text-slate-600">Assegura que as referências (borrows) não vivam mais do que os dados aos quais apontam, eliminando dangling pointers de forma estática.</p>
+                    </div>
+                </div>
+                 <div class="mt-12 bg-teal-50 border-l-4 border-teal-500 text-teal-800 p-6 rounded-r-lg">
+                    <p class="font-bold">Hipótese da Pesquisa:</p>
+                    <p class="mt-2">Modelos de Linguagem Ampla (LLMs) são capazes de gerar código Rust sintaticamente válido e semanticamente diverso em larga escala, servindo como uma fonte eficaz de casos de teste para validar a corretude e a robustez dos compiladores.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="solucao" class="py-16 md:py-24 bg-white">
+            <div class="container mx-auto px-6 max-w-7xl">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-slate-800">A Solução: Geração de Código com LLMs</h2>
+                    <p class="mt-4 text-lg text-slate-600 max-w-3xl mx-auto">A proposta é utilizar a capacidade generativa dos LLMs para criar um fluxo automatizado de testes, capaz de explorar cantos inesperados do compilador que geradores baseados em gramática podem não alcançar.</p>
+                </div>
+                
+                <div class="flex flex-col md:flex-row items-center justify-center space-y-8 md:space-y-0 md:space-x-8">
+                    <div class="text-center p-6 bg-slate-100 rounded-lg shadow-sm">
+                        <div class="text-5xl">🤖</div>
+                        <p class="font-bold mt-2">LLM</p>
+                        <p class="text-sm text-slate-500">Modelo de Linguagem</p>
+                    </div>
+                    <div class="text-4xl text-teal-500">→</div>
+                    <div class="text-center p-6 bg-slate-100 rounded-lg shadow-sm">
+                        <div class="text-5xl">📄</div>
+                        <p class="font-bold mt-2">Código Rust</p>
+                        <p class="text-sm text-slate-500">Geração Aleatória</p>
+                    </div>
+                    <div class="text-4xl text-teal-500">→</div>
+                    <div class="text-center p-6 bg-slate-100 rounded-lg shadow-sm">
+                        <div class="text-5xl">⚙️</div>
+                        <p class="font-bold mt-2">Compilador</p>
+                        <p class="text-sm text-slate-500">rustc</p>
+                    </div>
+                    <div class="text-4xl text-teal-500">→</div>
+                     <div class="text-center p-6 bg-slate-100 rounded-lg shadow-sm">
+                        <div class="text-5xl">🐞</div>
+                        <p class="font-bold mt-2">Detecção</p>
+                        <p class="text-sm text-slate-500">Análise de Falhas</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="ferramentas" class="py-16 md:py-24">
+            <div class="container mx-auto px-6 max-w-7xl">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-slate-800">Análise Comparativa de Ferramentas</h2>
+                    <p class="mt-4 text-lg text-slate-600 max-w-3xl mx-auto">O trabalho se baseia em abordagens existentes, buscando avançar no teste de compiladores. Explore as ferramentas relacionadas para entender o cenário atual e como esta pesquisa se posiciona.</p>
+                </div>
+                
+                <div class="lg:grid lg:grid-cols-12 lg:gap-8">
+                    <div class="lg:col-span-4 mb-8 lg:mb-0">
+                        <h3 class="font-bold text-lg mb-4">Selecione uma Ferramenta:</h3>
+                        <div id="tool-selector" class="flex flex-col space-y-2">
+                        </div>
+                    </div>
+                    <div class="lg:col-span-8">
+                        <div id="tool-details" class="bg-white p-6 rounded-lg shadow-md min-h-[200px] fade-in">
+                            <h3 id="tool-name" class="text-xl font-bold text-teal-700 mb-2"></h3>
+                            <p class="font-semibold text-slate-700">Abordagem:</p>
+                            <p id="tool-approach" class="text-slate-600 mb-4"></p>
+                            <p class="font-semibold text-slate-700">Foco Principal:</p>
+                            <p id="tool-focus" class="text-slate-600 mb-4"></p>
+                            <p class="font-semibold text-slate-700">Limitações Notáveis:</p>
+                            <p id="tool-limitations" class="text-slate-600"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-16">
+                    <h3 class="text-2xl font-bold text-center mb-8">Visualização: Foco da Ferramenta (Específico vs. Universal)</h3>
+                    <div class="chart-container">
+                        <canvas id="toolsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="metodologia" class="py-16 md:py-24 bg-white">
+            <div class="container mx-auto px-6 max-w-7xl">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl md:text-4xl font-bold text-slate-800">Metodologia do Projeto</h2>
+                    <p class="mt-4 text-lg text-slate-600 max-w-3xl mx-auto">O desenvolvimento segue um processo estruturado de 6 etapas, desde a pesquisa fundamental até a análise final dos resultados.</p>
+                </div>
+                <div class="relative">
+                    <div class="hidden md:block absolute left-1/2 top-4 bottom-4 w-0.5 bg-slate-200"></div>
+                    <div class="space-y-12 md:space-y-16">
+                        <div class="md:grid md:grid-cols-2 md:gap-8 items-center">
+                            <div class="flex justify-center md:justify-end md:pr-8">
+                                <div class="bg-teal-600 text-white w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold">1</div>
+                            </div>
+                            <div class="mt-4 md:mt-0 text-center md:text-left">
+                                <h3 class="text-xl font-bold">Pesquisa Bibliográfica</h3>
+                                <p class="text-slate-600">Revisão de literatura sobre LLMs, geração de código e testes de compiladores Rust.</p>
+                            </div>
+                        </div>
+                        <div class="md:grid md:grid-cols-2 md:gap-8 items-center">
+                             <div class="mt-4 md:mt-0 text-center md:text-right md:order-1">
+                                <h3 class="text-xl font-bold">Análise da Linguagem Rust</h3>
+                                <p class="text-slate-600">Estudo da sintaxe, semântica e especificações do compilador.</p>
+                            </div>
+                            <div class="flex justify-center md:justify-start md:pl-8 md:order-2">
+                                <div class="bg-teal-600 text-white w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold">2</div>
+                            </div>
+                        </div>
+                        <div class="md:grid md:grid-cols-2 md:gap-8 items-center">
+                             <div class="flex justify-center md:justify-end md:pr-8">
+                                <div class="bg-teal-600 text-white w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold">3</div>
+                            </div>
+                            <div class="mt-4 md:mt-0 text-center md:text-left">
+                                <h3 class="text-xl font-bold">Desenvolvimento do Gerador</h3>
+                                <p class="text-slate-600">Implementação de um gerador que utiliza LLMs para criar código Rust aleatório.</p>
+                            </div>
+                        </div>
+                        <div class="md:grid md:grid-cols-2 md:gap-8 items-center">
+                            <div class="mt-4 md:mt-0 text-center md:text-right md:order-1">
+                                <h3 class="text-xl font-bold">Integração com o Compilador</h3>
+                                <p class="text-slate-600">Automação do processo de compilação do código gerado.</p>
+                            </div>
+                            <div class="flex justify-center md:justify-start md:pl-8 md:order-2">
+                                <div class="bg-teal-600 text-white w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold">4</div>
+                            </div>
+                        </div>
+                         <div class="md:grid md:grid-cols-2 md:gap-8 items-center">
+                             <div class="flex justify-center md:justify-end md:pr-8">
+                                <div class="bg-teal-600 text-white w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold">5</div>
+                            </div>
+                            <div class="mt-4 md:mt-0 text-center md:text-left">
+                                <h3 class="text-xl font-bold">Execução de Testes</h3>
+                                <p class="text-slate-600">Avaliação da eficácia do gerador (compilação, erros, comportamento).</p>
+                            </div>
+                        </div>
+                        <div class="md:grid md:grid-cols-2 md:gap-8 items-center">
+                            <div class="mt-4 md:mt-0 text-center md:text-right md:order-1">
+                                <h3 class="text-xl font-bold">Análise dos Resultados</h3>
+                                <p class="text-slate-600">Coleta e análise dos dados para validar a abordagem.</p>
+                            </div>
+                            <div class="flex justify-center md:justify-start md:pl-8 md:order-2">
+                                <div class="bg-teal-600 text-white w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold">6</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="cronograma" class="py-16 md:py-24">
+            <div class="container mx-auto px-6 max-w-7xl">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-slate-800">Cronograma de Atividades</h2>
+                    <p class="mt-4 text-lg text-slate-600 max-w-3xl mx-auto">O projeto foi planejado para ser executado ao longo de oito meses, com marcos definidos para cada fase de desenvolvimento.</p>
+                </div>
+                
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <div class="grid grid-cols-9 border-b-2 border-slate-200 pb-2 mb-4 font-bold text-center text-sm">
+                        <div>Atividade</div>
+                        <div class="col-span-8 grid grid-cols-8">
+                            <span>Abr</span><span>Mai</span><span>Jun</span><span>Jul</span><span>Ago</span><span>Set</span><span>Out</span><span>Nov</span>
+                        </div>
+                    </div>
+                    <div class="space-y-4 text-sm">
+                        <div class="grid grid-cols-9 items-center">
+                            <div class="font-medium text-slate-700">Pesquisa Bibliográfica</div>
+                            <div class="col-span-8 relative h-6">
+                                <div class="gantt-bar absolute h-full rounded" style="left: 0%; width: 37.5%;"></div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-9 items-center">
+                            <div class="font-medium text-slate-700">Análise da Linguagem</div>
+                            <div class="col-span-8 relative h-6">
+                                <div class="gantt-bar absolute h-full rounded" style="left: 37.5%; width: 12.5%;"></div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-9 items-center">
+                            <div class="font-medium text-slate-700">Desenvolvimento</div>
+                            <div class="col-span-8 relative h-6">
+                                <div class="gantt-bar absolute h-full rounded" style="left: 37.5%; width: 25%;"></div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-9 items-center">
+                            <div class="font-medium text-slate-700">Integração</div>
+                            <div class="col-span-8 relative h-6">
+                                <div class="gantt-bar absolute h-full rounded" style="left: 50%; width: 12.5%;"></div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-9 items-center">
+                            <div class="font-medium text-slate-700">Execução de Testes</div>
+                            <div class="col-span-8 relative h-6">
+                                <div class="gantt-bar absolute h-full rounded" style="left: 62.5%; width: 12.5%;"></div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-9 items-center">
+                            <div class="font-medium text-slate-700">Análise dos Resultados</div>
+                            <div class="col-span-8 relative h-6">
+                                <div class="gantt-bar absolute h-full rounded" style="left: 62.5%; width: 25%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-slate-800 text-white py-12">
+        <div class="container mx-auto px-6 text-center max-w-4xl">
+            <h3 class="text-2xl font-bold mb-4">Considerações Finais</h3>
+            <p class="text-slate-300">Este trabalho estabelece uma base teórica e metodológica sólida para a utilização de LLMs no teste de compiladores Rust. A abordagem proposta tem o potencial de contribuir significativamente para a comunidade, oferecendo uma ferramenta para aumentar a confiança na corretude dos compiladores e, consequentemente, na segurança do ecossistema Rust.</p>
+        </div>
+    </footer>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+
+            mobileMenuButton.addEventListener('click', function () {
+                mobileMenu.classList.toggle('hidden');
+            });
+
+            const toolsData = [
+                {
+                    id: 'rustsmith',
+                    name: 'RustSmith',
+                    approach: 'Gerador de programas aleatórios baseado em AST, inspirado no CSmith.',
+                    focus: 'Teste end-to-end de compiladores Rust.',
+                    limitations: 'Não suporta concorrência, traits ou a palavra-chave `unsafe`.',
+                    specificity: 9
+                },
+                {
+                    id: 'aid',
+                    name: 'AID',
+                    approach: 'Combina LLMs com testes diferenciais para gerar oráculos e casos de teste.',
+                    focus: 'Detecção de bugs sutis em programas já testados (C++ e Python).',
+                    limitations: 'Focado em C++ e Python, não diretamente em Rust.',
+                    specificity: 2
+                },
+                {
+                    id: 'syrust-crabtree',
+                    name: 'SyRust/Crabtree',
+                    approach: 'Síntese de testes para APIs Rust, com Crabtree usando fuzzing para escalar.',
+                    focus: 'Encontrar bugs em bibliotecas que utilizam `unsafe`.',
+                    limitations: 'SyRust não é escalável; Crabtree pode ter baixa cobertura de código.',
+                    specificity: 10
+                },
+                {
+                    id: 'rust-twins',
+                    name: 'Rust-twins',
+                    approach: 'Usa LLM para mutação de código e geração de "macros gêmeas" (MBE e PCD) para teste de equivalência.',
+                    focus: 'Teste de compiladores Rust através da expansão de macros.',
+                    limitations: 'Focado na semântica específica da expansão de macros.',
+                    specificity: 8
+                },
+                {
+                    id: 'fuzz4all',
+                    name: 'Fuzz4All',
+                    approach: 'Gerador universal de casos de teste baseado em LLMs (um distilador e um gerador).',
+                    focus: 'Universalidade (C, C++, Go, etc.) e superação de fuzzers tradicionais.',
+                    limitations: 'Abordagem geral, não otimizada para as complexidades específicas de Rust.',
+                    specificity: 1
+                }
+            ];
+
+            const toolSelector = document.getElementById('tool-selector');
+            const toolNameEl = document.getElementById('tool-name');
+            const toolApproachEl = document.getElementById('tool-approach');
+            const toolFocusEl = document.getElementById('tool-focus');
+            const toolLimitationsEl = document.getElementById('tool-limitations');
+            const toolDetailsContainer = document.getElementById('tool-details');
+
+            function updateToolDetails(toolId) {
+                const tool = toolsData.find(t => t.id === toolId);
+                if (tool) {
+                    toolDetailsContainer.classList.remove('fade-in');
+                    void toolDetailsContainer.offsetWidth;
+                    toolDetailsContainer.classList.add('fade-in');
+
+                    toolNameEl.textContent = tool.name;
+                    toolApproachEl.textContent = tool.approach;
+                    toolFocusEl.textContent = tool.focus;
+                    toolLimitationsEl.textContent = tool.limitations;
+
+                    document.querySelectorAll('.tool-button').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    document.querySelector(`[data-tool-id='${toolId}']`).classList.add('active');
+                }
+            }
+
+            toolsData.forEach(tool => {
+                const button = document.createElement('button');
+                button.textContent = tool.name;
+                button.dataset.toolId = tool.id;
+                button.className = 'tool-button w-full text-left px-4 py-2 rounded-md bg-slate-50 hover:bg-slate-100 text-slate-700';
+                button.addEventListener('click', () => updateToolDetails(tool.id));
+                toolSelector.appendChild(button);
+            });
+
+            updateToolDetails(toolsData[0].id);
+
+            const ctx = document.getElementById('toolsChart').getContext('2d');
+            const toolsChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: toolsData.map(t => t.name),
+                    datasets: [{
+                        label: 'Nível de Especificidade para Rust (1-10)',
+                        data: toolsData.map(t => t.specificity),
+                        backgroundColor: 'rgba(20, 184, 166, 0.6)', // teal-500 with opacity
+                        borderColor: 'rgba(15, 118, 110, 1)', // teal-700
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            max: 10,
+                            title: {
+                                display: true,
+                                text: '1 (Universal) <---> 10 (Específico para Rust)'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.x !== null) {
+                                        label += context.parsed.x;
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    onClick: (event, elements) => {
+                        if (elements.length > 0) {
+                            const clickedIndex = elements[0].index;
+                            const toolId = toolsData[clickedIndex].id;
+                            updateToolDetails(toolId);
+                             document.getElementById('ferramentas').scrollIntoView({ behavior: 'smooth' });
+                        }
+                    }
+                }
+            });
+        });
+    </script>
 
 </body>
-
-
-
-
 </html>
+
